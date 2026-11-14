@@ -28,6 +28,44 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class SqlExecuteItem(BaseModel):
+    """单条脚本执行请求：脚本编号 + 本次执行参数。"""
+
+    脚本编号: str
+    参数: dict[str, Any] = Field(default_factory=dict)
+
+
+class SqlBatchPayload(BaseModel):
+    """批量执行请求：多选脚本后整组一次提交。"""
+
+    items: list[SqlExecuteItem] = Field(default_factory=list)
+
+
+class SqlExecuteResult(BaseModel):
+    """单条脚本的执行结果与缓存版本说明。"""
+
+    ok: bool
+    message: str
+    脚本编号: str
+    脚本名称: str = ""
+    参数: dict[str, Any] = Field(default_factory=dict)
+    指纹: str = ""
+    参数串: str = ""
+    来源: str = ""
+    缓存结果: str = ""
+    执行版本: str = ""
+    缓存版本: str = ""
+    缓存版本数: int = 0
+
+
+class SqlBatchResult(BaseModel):
+    """批量执行结果：整组提交后逐条说明缓存命中情况。"""
+
+    ok: bool
+    message: str
+    results: list[SqlExecuteResult] = Field(default_factory=list)
+
+
 
 class MartEntry(BaseModel):
     """集市定义明细结构。"""
